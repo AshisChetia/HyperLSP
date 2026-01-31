@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaArrowLeft, FaCheck, FaTimes, FaRupeeSign, FaClock, FaCalendarAlt, FaMapMarkerAlt, FaPhone, FaEnvelope } from 'react-icons/fa'
+import { useRef } from 'react'
 import { HiSparkles } from 'react-icons/hi'
 import { bookingAPI } from '../../services/api'
+import toast from 'react-hot-toast'
 
 // Status colors and labels
 const statusConfig = {
@@ -48,9 +50,11 @@ function BookingRequests() {
             })
             if (response.success) {
                 fetchBookings()
+                toast.success('Booking accepted successfully')
             }
         } catch (error) {
-            alert('Failed to accept booking')
+            console.error('Accept booking error:', error)
+            toast.error('Failed to accept booking')
         } finally {
             setProcessingId(null)
         }
@@ -67,9 +71,11 @@ function BookingRequests() {
             })
             if (response.success) {
                 fetchBookings()
+                toast.success('Booking rejected')
             }
         } catch (error) {
-            alert('Failed to reject booking')
+            console.error('Reject booking error:', error)
+            toast.error('Failed to reject booking')
         } finally {
             setProcessingId(null)
         }
@@ -83,9 +89,11 @@ function BookingRequests() {
             const response = await bookingAPI.completeBooking(bookingId)
             if (response.success) {
                 fetchBookings()
+                toast.success('Job marked as completed')
             }
         } catch (error) {
-            alert('Failed to complete booking')
+            console.error('Complete booking error:', error)
+            toast.error('Failed to complete booking')
         } finally {
             setProcessingId(null)
         }
@@ -156,8 +164,8 @@ function BookingRequests() {
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${activeTab === tab
-                                    ? 'bg-orange-500 text-white'
-                                    : 'bg-white text-slate-600 hover:bg-slate-100'
+                                ? 'bg-orange-500 text-white'
+                                : 'bg-white text-slate-600 hover:bg-slate-100'
                                 }`}
                         >
                             {tab.charAt(0).toUpperCase() + tab.slice(1)}

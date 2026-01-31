@@ -1,26 +1,66 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { FaBriefcase, FaUser, FaSignOutAlt, FaCalendarAlt, FaChartLine, FaStar } from 'react-icons/fa'
+import { FaBriefcase, FaUser, FaSignOutAlt, FaCalendarAlt, FaChartLine, FaStar, FaRupeeSign, FaCheck, FaTimes, FaMapMarkerAlt } from 'react-icons/fa'
+import { bookingAPI } from '../../services/api'
 import { HiSparkles } from 'react-icons/hi'
 import { useEffect, useState } from 'react'
 
 function Home() {
     const navigate = useNavigate()
     const [provider, setProvider] = useState(null)
+    const [stats, setStats] = useState({
+        totalBookings: 0,
+        completedJobs: 0,
+        pendingRequests: 0,
+        avgRating: 0
+    })
+    const [recentBookings, setRecentBookings] = useState([])
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const userData = localStorage.getItem('user')
         if (userData) {
             setProvider(JSON.parse(userData))
+            fetchDashboardData()
         } else {
             navigate('/login')
         }
     }, [navigate])
+
+    const fetchDashboardData = async () => {
+        try {
+            const [statsRes, bookingsRes] = await Promise.all([
+                bookingAPI.getProviderStats(),
+                bookingAPI.getProviderBookings()
+            ])
+
+            if (statsRes.success) {
+                setStats(statsRes.data)
+            }
+
+            if (bookingsRes.success) {
+                // Get 3 most recent bookings
+                setRecentBookings(bookingsRes.data.slice(0, 3))
+            }
+        } catch (error) {
+            console.error('Error fetching dashboard data:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const handleLogout = () => {
         localStorage.removeItem('token')
         localStorage.removeItem('user')
         localStorage.removeItem('role')
         navigate('/login')
+    }
+
+    const statusColors = {
+        pending: 'bg-yellow-100 text-yellow-700',
+        accepted: 'bg-green-100 text-green-700',
+        rejected: 'bg-red-100 text-red-700',
+        completed: 'bg-blue-100 text-blue-700',
+        cancelled: 'bg-gray-100 text-gray-700'
     }
 
     return (
@@ -65,20 +105,20 @@ function Home() {
                 {/* Stats Overview */}
                 <div className="grid md:grid-cols-4 gap-6 mb-8">
                     <div className="bg-white rounded-2xl shadow-lg p-6">
-                        <div className="text-3xl font-bold text-slate-800">0</div>
+                        <div className="text-3xl font-bold text-slate-800">{stats.totalBookings}</div>
                         <p className="text-slate-500">Total Bookings</p>
                     </div>
                     <div className="bg-white rounded-2xl shadow-lg p-6">
-                        <div className="text-3xl font-bold text-green-600">0</div>
+                        <div className="text-3xl font-bold text-green-600">{stats.completedJobs}</div>
                         <p className="text-slate-500">Completed Jobs</p>
                     </div>
                     <div className="bg-white rounded-2xl shadow-lg p-6">
-                        <div className="text-3xl font-bold text-orange-600">0</div>
+                        <div className="text-3xl font-bold text-orange-600">{stats.pendingRequests}</div>
                         <p className="text-slate-500">Pending Requests</p>
                     </div>
                     <div className="bg-white rounded-2xl shadow-lg p-6">
                         <div className="flex items-center gap-1 text-3xl font-bold text-yellow-500">
-                            <FaStar /> 0.0
+                            <FaStar /> {typeof stats.avgRating === 'number' ? stats.avgRating.toFixed(1) : '0.0'}
                         </div>
                         <p className="text-slate-500">Average Rating</p>
                     </div>
@@ -112,12 +152,52 @@ function Home() {
                 </div>
 
                 {/* Recent Bookings Placeholder */}
+                {/* Recent Bookings */}
                 <div className="bg-white rounded-2xl shadow-lg p-6">
-                    <h2 className="text-xl font-bold text-slate-800 mb-4">Recent Booking Requests</h2>
-                    <div className="text-center py-12 text-slate-400">
-                        <p>No booking requests yet</p>
-                        <p className="text-sm mt-2">Complete your profile to start receiving bookings!</p>
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-xl font-bold text-slate-800">Recent Booking Requests</h2>
+                        <Link to="/provider/bookings" className="text-orange-500 font-medium hover:text-orange-600">
+                            View All
+                        </Link>
                     </div>
+
+                    {recentBookings.length === 0 ? (
+                        <div className="text-center py-12 text-slate-400">
+                            <p>No booking requests yet</p>
+                            <p className="text-sm mt-2">Complete your profile to start receiving bookings!</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            {recentBookings.map((booking) => (
+                                <div key={booking._id} className="flex flex-col md:flex-row md:items-center justify-between p-4 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors gap-4">
+                                    <div className="flex items-center gap-4">
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold bg-slate-100 text-slate-600`}>
+                                            {booking.userId?.name?.charAt(0) || 'U'}
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-slate-800">{booking.serviceId?.name}</h3>
+                                            <p className="text-sm text-slate-500">{booking.userId?.name} • {new Date(booking.preferredDate).toLocaleDateString()}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-4 justify-between md:justify-end flex-1">
+                                        <div className="flex items-center gap-2 text-slate-600 text-sm">
+                                            <FaMapMarkerAlt className="text-red-400" />
+                                            <span className="truncate max-w-[150px]">{booking.serviceAddress}</span>
+                                        </div>
+
+                                        <div className="font-bold text-slate-800 flex items-center">
+                                            <FaRupeeSign />{booking.proposedPrice}
+                                        </div>
+
+                                        <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${statusColors[booking.status]}`}>
+                                            {booking.status}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

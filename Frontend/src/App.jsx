@@ -1,7 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Landing from './pages/Landing'
+import Services from './pages/Services'
+import Contact from './pages/Contact'
 import Signup from './pages/Signup'
 import Login from './pages/Login'
+import { Toaster } from 'react-hot-toast'
 // User Pages
 import UserHome from './pages/user/Home'
 import UserProfile from './pages/user/Profile'
@@ -20,9 +23,12 @@ import './App.css'
 function App() {
   return (
     <Router>
+      <Toaster position="top-center" />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Landing />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
 

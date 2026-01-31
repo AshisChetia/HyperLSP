@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { FaArrowLeft, FaStar, FaMapMarkerAlt, FaRupeeSign, FaClock, FaCalendarAlt, FaTimes, FaCheck, FaSpinner } from 'react-icons/fa'
 import { HiSparkles } from 'react-icons/hi'
 import { bookingAPI } from '../../services/api'
+import toast from 'react-hot-toast'
 
 // Status colors and labels
 const statusConfig = {
@@ -51,9 +52,10 @@ function MyBookings() {
             const response = await bookingAPI.cancelBooking(bookingId)
             if (response.success) {
                 fetchBookings()
+                toast.success('Booking cancelled successfully')
             }
         } catch (error) {
-            alert('Failed to cancel booking')
+            toast.error('Failed to cancel booking')
         }
     }
 
@@ -73,9 +75,10 @@ function MyBookings() {
             if (response.success) {
                 setShowRatingModal(false)
                 fetchBookings()
+                toast.success('Rating submitted successfully')
             }
         } catch (error) {
-            alert('Failed to submit rating')
+            toast.error('Failed to submit rating')
         } finally {
             setSubmitting(false)
         }
@@ -129,8 +132,8 @@ function MyBookings() {
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${activeTab === tab
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-white text-slate-600 hover:bg-slate-100'
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-white text-slate-600 hover:bg-slate-100'
                                 }`}
                         >
                             {tab.charAt(0).toUpperCase() + tab.slice(1)}

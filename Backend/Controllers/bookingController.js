@@ -469,6 +469,7 @@ export const getProviderStats = async (req, res) => {
             success: true,
             data: {
                 ...data,
+                totalBookings: await Booking.countDocuments({ providerId }),
                 todayBookings,
                 pendingRequests
             }

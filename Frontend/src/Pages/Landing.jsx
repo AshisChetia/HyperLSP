@@ -150,7 +150,7 @@ function Landing() {
                                     <FaArrowRight />
                                 </Link>
                                 <Link
-                                    to="/signup"
+                                    to="/signup?role=provider"
                                     className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-2xl font-bold text-lg hover:shadow-xl hover:shadow-orange-500/30 transition-all transform hover:scale-105"
                                 >
                                     Become a Provider
@@ -344,7 +344,7 @@ function Landing() {
                                     ))}
                                 </ul>
                                 <Link
-                                    to="/signup"
+                                    to="/signup?role=provider"
                                     className="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl font-semibold hover:shadow-lg hover:shadow-orange-500/30 transition-all"
                                 >
                                     Join as Provider
@@ -422,7 +422,7 @@ function Landing() {
                                     <FaSearch />
                                 </Link>
                                 <Link
-                                    to="/signup"
+                                    to="/signup?role=provider"
                                     className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-2xl font-bold text-lg hover:shadow-xl hover:shadow-orange-500/30 transition-all transform hover:scale-105"
                                 >
                                     Become a Provider

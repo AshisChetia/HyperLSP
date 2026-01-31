@@ -1,12 +1,13 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { FaUser, FaEnvelope, FaMapMarkerAlt, FaPhone, FaShoppingCart, FaToolbox } from 'react-icons/fa'
 import { HiLocationMarker } from 'react-icons/hi'
 import { authAPI } from '../services/api'
 
 function Signup() {
     const navigate = useNavigate()
-    const [activeTab, setActiveTab] = useState('user')
+    const [searchParams] = useSearchParams()
+    const [activeTab, setActiveTab] = useState(searchParams.get('role') === 'provider' ? 'provider' : 'user')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [formData, setFormData] = useState({

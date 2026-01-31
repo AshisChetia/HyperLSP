@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { FaPlus, FaEdit, FaTrash, FaArrowLeft, FaRupeeSign, FaClock } from 'react-icons/fa'
 import { HiSparkles } from 'react-icons/hi'
 import { serviceAPI } from '../../services/api'
+import toast from 'react-hot-toast'
 
 // Service category icons mapping
 const categoryIcons = {
@@ -121,14 +122,14 @@ function MyServices() {
             }
 
             if (response.success) {
-                setSuccess(editingService ? 'Service updated successfully!' : 'Service added successfully!')
+                toast.success(editingService ? 'Service updated successfully!' : 'Service added successfully!')
                 fetchServices()
                 setTimeout(() => {
                     setShowModal(false)
                 }, 1500)
             }
         } catch (error) {
-            setError(error.response?.data?.message || 'Failed to save service')
+            toast.error(error.response?.data?.message || 'Failed to save service')
         } finally {
             setSubmitting(false)
         }
@@ -141,10 +142,11 @@ function MyServices() {
             const response = await serviceAPI.deleteService(serviceId)
             if (response.success) {
                 setServices(services.filter(s => s._id !== serviceId))
+                toast.success('Service deleted successfully')
             }
         } catch (error) {
             console.error('Error deleting service:', error)
-            alert('Failed to delete service')
+            toast.error('Failed to delete service')
         }
     }
 
@@ -272,16 +274,7 @@ function MyServices() {
                         </div>
 
                         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                            {error && (
-                                <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-600">
-                                    {error}
-                                </div>
-                            )}
-                            {success && (
-                                <div className="p-4 bg-green-50 border border-green-200 rounded-xl text-green-600">
-                                    {success}
-                                </div>
-                            )}
+
 
                             <div>
                                 <label className="block text-sm font-medium text-slate-600 mb-2">Service Name</label>

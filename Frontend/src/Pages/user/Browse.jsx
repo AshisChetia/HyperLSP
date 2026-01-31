@@ -165,44 +165,46 @@ function Browse() {
                     </form>
                 </div>
 
-                {/* Categories */}
-                <div className="mb-8">
-                    <h2 className="text-xl font-bold text-slate-800 mb-4">Browse by Category</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                        {categories.map((category) => (
-                            <button
-                                key={category.id}
-                                onClick={() => handleCategoryClick(category.name)}
-                                className={`p-4 rounded-xl border-2 transition-all ${selectedCategory === category.name
-                                    ? 'bg-blue-500 border-blue-500 text-white'
-                                    : 'bg-white border-slate-200 text-slate-700 hover:border-blue-300'
-                                    }`}
-                            >
-                                <div className="text-2xl mb-2">{category.icon}</div>
-                                <div className="text-sm font-medium">{category.name}</div>
-                            </button>
-                        ))}
-                    </div>
-                    {selectedCategory && (
-                        <div className="mt-4 flex items-center gap-2">
-                            <span className="text-slate-500">Filtering by:</span>
-                            <span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
-                                {selectedCategory}
-                            </span>
-                            <button
-                                onClick={() => handleCategoryClick(selectedCategory)}
-                                className="text-slate-400 hover:text-slate-600"
-                            >
-                                ✕
-                            </button>
+                {/* Categories - Only show if NO search keyword */}
+                {!searchKeyword && (
+                    <div className="mb-8">
+                        <h2 className="text-xl font-bold text-slate-800 mb-4">Browse by Category</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                            {categories.map((category) => (
+                                <button
+                                    key={category.id}
+                                    onClick={() => handleCategoryClick(category.name)}
+                                    className={`p-4 rounded-xl border-2 transition-all ${selectedCategory === category.name
+                                        ? 'bg-blue-500 border-blue-500 text-white'
+                                        : 'bg-white border-slate-200 text-slate-700 hover:border-blue-300'
+                                        }`}
+                                >
+                                    <div className="text-2xl mb-2">{category.icon}</div>
+                                    <div className="text-sm font-medium">{category.name}</div>
+                                </button>
+                            ))}
                         </div>
-                    )}
-                </div>
+                        {selectedCategory && (
+                            <div className="mt-4 flex items-center gap-2">
+                                <span className="text-slate-500">Filtering by:</span>
+                                <span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
+                                    {selectedCategory}
+                                </span>
+                                <button
+                                    onClick={() => handleCategoryClick(selectedCategory)}
+                                    className="text-slate-400 hover:text-slate-600"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {/* Providers List */}
                 <div>
                     <h2 className="text-xl font-bold text-slate-800 mb-4">
-                        {selectedCategory ? `${selectedCategory} Providers` : 'All Providers'}
+                        {searchKeyword ? `Search Results for "${searchKeyword}"` : (selectedCategory ? `${selectedCategory} Providers` : 'All Providers')}
                         {searchPincode && ` in ${searchPincode}`}
                     </h2>
 
@@ -215,7 +217,11 @@ function Browse() {
                         <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
                             <div className="text-6xl mb-4">🔍</div>
                             <h3 className="text-2xl font-bold text-slate-800 mb-2">No Providers Found</h3>
-                            <p className="text-slate-500">Try adjusting your search filters or check another area.</p>
+                            <p className="text-slate-500 text-lg">
+                                {searchKeyword
+                                    ? `There are no providers for "${searchKeyword}"${searchPincode ? ` in pincode ${searchPincode}` : ''} at this time.`
+                                    : 'Try adjusting your search filters or check another area.'}
+                            </p>
                         </div>
                     ) : (
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
