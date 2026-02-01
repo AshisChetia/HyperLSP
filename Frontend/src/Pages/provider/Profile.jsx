@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaEdit, FaSave, FaTimes, FaArrowLeft, FaCheckCircle } from 'react-icons/fa'
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaEdit, FaSave, FaTimes, FaArrowLeft, FaCheckCircle, FaShieldAlt } from 'react-icons/fa'
 import { HiSparkles, HiLocationMarker } from 'react-icons/hi'
 
 // Static provider profile image
-const PROVIDER_PROFILE_IMAGE = 'https://api.dicebear.com/7.x/avataaars/svg?seed=provider&backgroundColor=ffd5dc'
+const PROVIDER_PROFILE_IMAGE = '/provider.webp'
 
 function Profile() {
     const navigate = useNavigate()
@@ -73,22 +73,30 @@ function Profile() {
     if (!provider) return null
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-slate-100">
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+            {/* Animated Background */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-40 left-20 w-72 h-72 bg-orange-500/10 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-40 right-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+            </div>
+
             {/* Navigation */}
-            <nav className="bg-white/80 backdrop-blur-xl border-b border-slate-100 sticky top-0 z-50">
+            <nav className="bg-slate-900/50 backdrop-blur-2xl border-b border-white/5 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         <div className="flex items-center gap-4">
-                            <Link to="/provider/home" className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors">
-                                <FaArrowLeft />
-                                <span className="font-medium">Back to Dashboard</span>
+                            <Link to="/provider/home" className="flex items-center gap-2 text-slate-400 hover:text-white transition-all duration-300 group">
+                                <div className="w-8 h-8 bg-white/5 rounded-lg flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                                    <FaArrowLeft className="text-sm" />
+                                </div>
+                                <span className="font-medium hidden sm:block">Back to Dashboard</span>
                             </Link>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-400 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/25">
                                 <HiSparkles className="text-white text-xl" />
                             </div>
-                            <span className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-amber-500 bg-clip-text text-transparent">
+                            <span className="text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
                                 HyperLSP
                             </span>
                         </div>
@@ -97,63 +105,76 @@ function Profile() {
             </nav>
 
             {/* Main Content */}
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Profile Card */}
-                <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
                     {/* Header with gradient */}
-                    <div className="bg-gradient-to-r from-orange-500 to-amber-500 h-32 relative">
-                        <div className="absolute -bottom-16 left-8">
-                            <div className="w-32 h-32 rounded-2xl border-4 border-white shadow-lg overflow-hidden bg-white">
+                    <div className="relative bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 p-8">
+                        <div className="absolute inset-0 bg-black/10"></div>
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+
+                        <div className="relative flex flex-col md:flex-row items-center gap-6">
+                            <div className="relative">
                                 <img
                                     src={PROVIDER_PROFILE_IMAGE}
                                     alt="Profile"
-                                    className="w-full h-full object-cover"
+                                    className="w-28 h-28 rounded-2xl bg-white object-cover shadow-2xl ring-4 ring-white/20"
                                 />
+                                {provider.isVerified && (
+                                    <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center shadow-lg">
+                                        <FaCheckCircle className="text-white text-sm" />
+                                    </div>
+                                )}
                             </div>
+                            <div className="text-center md:text-left flex-1">
+                                <h1 className="text-2xl font-bold text-white mb-2">{provider.name}</h1>
+                                <div className="flex items-center justify-center md:justify-start gap-3 flex-wrap">
+                                    <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 backdrop-blur-sm border border-white/10 rounded-xl text-sm text-white">
+                                        <FaShieldAlt />
+                                        Service Provider
+                                    </span>
+                                    {provider.isVerified ? (
+                                        <span className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/20 border border-emerald-400/30 rounded-xl text-sm text-emerald-300">
+                                            <FaCheckCircle />
+                                            Verified
+                                        </span>
+                                    ) : (
+                                        <span className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/20 border border-amber-400/30 rounded-xl text-sm text-amber-300">
+                                            Pending Verification
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                            {!isEditing && (
+                                <button
+                                    onClick={() => setIsEditing(true)}
+                                    className="flex items-center gap-2 px-5 py-2.5 bg-white/20 backdrop-blur-sm text-white rounded-xl hover:bg-white/30 transition-all font-medium border border-white/10"
+                                >
+                                    <FaEdit />
+                                    Edit Profile
+                                </button>
+                            )}
                         </div>
-                        {!isEditing && (
-                            <button
-                                onClick={() => setIsEditing(true)}
-                                className="absolute top-4 right-4 flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-xl hover:bg-white/30 transition-all font-medium"
-                            >
-                                <FaEdit />
-                                Edit Profile
-                            </button>
-                        )}
                     </div>
 
                     {/* Profile Content */}
-                    <div className="pt-20 px-8 pb-8">
+                    <div className="p-6 md:p-8">
                         {/* Message */}
                         {message.text && (
-                            <div className={`mb-6 p-4 rounded-xl ${message.type === 'success' ? 'bg-green-50 text-green-600 border border-green-200' : 'bg-red-50 text-red-600 border border-red-200'}`}>
+                            <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 ${message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
+                                {message.type === 'success' ? <FaCheckCircle /> : <FaTimes />}
                                 {message.text}
                             </div>
                         )}
 
-                        {/* Provider Role Badge */}
-                        <div className="mb-6 flex items-center gap-3">
-                            <span className="px-4 py-2 bg-orange-100 text-orange-600 rounded-full text-sm font-semibold">
-                                Service Provider
-                            </span>
-                            {provider.isVerified ? (
-                                <span className="flex items-center gap-1 px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm font-medium">
-                                    <FaCheckCircle />
-                                    Verified
-                                </span>
-                            ) : (
-                                <span className="px-3 py-1 bg-yellow-100 text-yellow-600 rounded-full text-sm font-medium">
-                                    Pending Verification
-                                </span>
-                            )}
-                        </div>
-
                         {/* Profile Fields */}
                         <div className="grid md:grid-cols-2 gap-6">
                             {/* Name */}
-                            <div className="space-y-2">
-                                <label className="flex items-center gap-2 text-sm font-medium text-slate-600">
-                                    <FaUser className="text-orange-500" />
+                            <div className="space-y-3">
+                                <label className="flex items-center gap-2 text-sm font-medium text-slate-400">
+                                    <div className="w-6 h-6 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                                        <FaUser className="text-orange-400 text-xs" />
+                                    </div>
                                     Full Name
                                 </label>
                                 {isEditing ? (
@@ -162,27 +183,31 @@ function Profile() {
                                         name="name"
                                         value={formData.name}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-orange-400 transition-all"
+                                        className="w-full px-4 py-4 bg-slate-800/50 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-orange-500/50 focus:bg-slate-800 transition-all duration-300"
                                     />
                                 ) : (
-                                    <p className="px-4 py-3 bg-slate-50 rounded-xl text-slate-800 font-medium">{provider.name}</p>
+                                    <p className="px-4 py-4 bg-slate-800/50 border border-white/10 rounded-xl text-white font-medium">{provider.name}</p>
                                 )}
                             </div>
 
                             {/* Email */}
-                            <div className="space-y-2">
-                                <label className="flex items-center gap-2 text-sm font-medium text-slate-600">
-                                    <FaEnvelope className="text-orange-500" />
+                            <div className="space-y-3">
+                                <label className="flex items-center gap-2 text-sm font-medium text-slate-400">
+                                    <div className="w-6 h-6 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                                        <FaEnvelope className="text-orange-400 text-xs" />
+                                    </div>
                                     Email Address
                                 </label>
-                                <p className="px-4 py-3 bg-slate-100 rounded-xl text-slate-600">{provider.email}</p>
-                                <p className="text-xs text-slate-400">Email cannot be changed</p>
+                                <p className="px-4 py-4 bg-slate-800/30 border border-white/5 rounded-xl text-slate-500">{provider.email}</p>
+                                <p className="text-xs text-slate-600">Email cannot be changed</p>
                             </div>
 
                             {/* Phone */}
-                            <div className="space-y-2">
-                                <label className="flex items-center gap-2 text-sm font-medium text-slate-600">
-                                    <FaPhone className="text-orange-500" />
+                            <div className="space-y-3">
+                                <label className="flex items-center gap-2 text-sm font-medium text-slate-400">
+                                    <div className="w-6 h-6 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                                        <FaPhone className="text-orange-400 text-xs" />
+                                    </div>
                                     Phone Number
                                 </label>
                                 {isEditing ? (
@@ -191,17 +216,19 @@ function Profile() {
                                         name="phone"
                                         value={formData.phone}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-orange-400 transition-all"
+                                        className="w-full px-4 py-4 bg-slate-800/50 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-orange-500/50 focus:bg-slate-800 transition-all duration-300"
                                     />
                                 ) : (
-                                    <p className="px-4 py-3 bg-slate-50 rounded-xl text-slate-800 font-medium">{provider.phone}</p>
+                                    <p className="px-4 py-4 bg-slate-800/50 border border-white/10 rounded-xl text-white font-medium">{provider.phone}</p>
                                 )}
                             </div>
 
                             {/* Pincode */}
-                            <div className="space-y-2">
-                                <label className="flex items-center gap-2 text-sm font-medium text-slate-600">
-                                    <HiLocationMarker className="text-orange-500" />
+                            <div className="space-y-3">
+                                <label className="flex items-center gap-2 text-sm font-medium text-slate-400">
+                                    <div className="w-6 h-6 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                                        <HiLocationMarker className="text-orange-400 text-xs" />
+                                    </div>
                                     Pincode
                                 </label>
                                 {isEditing ? (
@@ -210,17 +237,19 @@ function Profile() {
                                         name="pincode"
                                         value={formData.pincode}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-orange-400 transition-all"
+                                        className="w-full px-4 py-4 bg-slate-800/50 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-orange-500/50 focus:bg-slate-800 transition-all duration-300"
                                     />
                                 ) : (
-                                    <p className="px-4 py-3 bg-slate-50 rounded-xl text-slate-800 font-medium">{provider.pincode}</p>
+                                    <p className="px-4 py-4 bg-slate-800/50 border border-white/10 rounded-xl text-white font-medium">{provider.pincode}</p>
                                 )}
                             </div>
 
                             {/* Address - Full Width */}
-                            <div className="space-y-2 md:col-span-2">
-                                <label className="flex items-center gap-2 text-sm font-medium text-slate-600">
-                                    <FaMapMarkerAlt className="text-orange-500" />
+                            <div className="space-y-3 md:col-span-2">
+                                <label className="flex items-center gap-2 text-sm font-medium text-slate-400">
+                                    <div className="w-6 h-6 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                                        <FaMapMarkerAlt className="text-orange-400 text-xs" />
+                                    </div>
                                     Address
                                 </label>
                                 {isEditing ? (
@@ -229,10 +258,10 @@ function Profile() {
                                         value={formData.address}
                                         onChange={handleChange}
                                         rows="3"
-                                        className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-orange-400 transition-all resize-none"
+                                        className="w-full px-4 py-4 bg-slate-800/50 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-orange-500/50 focus:bg-slate-800 transition-all duration-300 resize-none"
                                     />
                                 ) : (
-                                    <p className="px-4 py-3 bg-slate-50 rounded-xl text-slate-800 font-medium">{provider.address}</p>
+                                    <p className="px-4 py-4 bg-slate-800/50 border border-white/10 rounded-xl text-white font-medium">{provider.address}</p>
                                 )}
                             </div>
                         </div>
@@ -243,14 +272,14 @@ function Profile() {
                                 <button
                                     onClick={handleSave}
                                     disabled={loading}
-                                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50"
+                                    className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl font-bold hover:shadow-lg hover:shadow-orange-500/25 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50"
                                 >
                                     <FaSave />
                                     {loading ? 'Saving...' : 'Save Changes'}
                                 </button>
                                 <button
                                     onClick={handleCancel}
-                                    className="px-6 py-3 bg-slate-100 text-slate-600 rounded-xl font-semibold hover:bg-slate-200 transition-all"
+                                    className="px-6 py-4 bg-white/5 border border-white/10 text-slate-400 rounded-xl font-semibold hover:bg-white/10 hover:text-white transition-all duration-300"
                                 >
                                     <FaTimes className="inline mr-2" />
                                     Cancel

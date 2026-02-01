@@ -6,7 +6,7 @@ import Service from '../Models/Service.js';
 // @access  Public
 export const getProviders = async (req, res) => {
     try {
-        const { pincode, category } = req.query;
+        const { pincode, category, keyword } = req.query;
 
         // Build provider query
         let providerQuery = { isAvailable: true };
@@ -27,6 +27,22 @@ export const getProviders = async (req, res) => {
             });
             providers = providers.filter(p =>
                 providersWithCategory.some(id => id.toString() === p._id.toString())
+            );
+        }
+
+        // If keyword is provided, filter providers who have services matching the keyword
+        if (keyword && !category) {
+            const keywordRegex = new RegExp(keyword, 'i');
+            const providersWithKeyword = await Service.distinct('providerId', {
+                $or: [
+                    { name: keywordRegex },
+                    { category: keywordRegex },
+                    { description: keywordRegex }
+                ],
+                isActive: true
+            });
+            providers = providers.filter(p =>
+                providersWithKeyword.some(id => id.toString() === p._id.toString())
             );
         }
 
