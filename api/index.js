@@ -418,14 +418,26 @@ app.get('/api/providers', async (req, res) => {
         let filter = {};
         if (pincode) filter.pincode = pincode;
 
-        let providers = await Provider.find(filter).select('-password');
+        let providers = await Provider.find(filter).select('-password').lean();
 
         if (category) {
             const servicesWithCategory = await Service.find({ category }).distinct('provider');
             providers = providers.filter(p => servicesWithCategory.some(s => s.equals(p._id)));
         }
 
-        res.json({ success: true, data: providers });
+        // Add service count for each provider
+        const providersWithServices = await Promise.all(providers.map(async (provider) => {
+            const servicesCount = await Service.countDocuments({ provider: provider._id, isActive: true });
+            const services = await Service.find({ provider: provider._id, isActive: true }).limit(3);
+            return {
+                ...provider,
+                servicesCount,
+                services,
+                totalReviews: provider.totalRatings || 0
+            };
+        }));
+
+        res.json({ success: true, data: providersWithServices });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

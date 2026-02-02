@@ -216,17 +216,17 @@ function Browse() {
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
                             {categories.map((category) => (
                                 <button
-                                    key={category.id}
-                                    onClick={() => handleCategoryClick(category.name)}
-                                    className={`group relative p-4 rounded-xl border transition-all duration-300 overflow-hidden ${selectedCategory === category.name
+                                    key={category}
+                                    onClick={() => handleCategoryClick(category)}
+                                    className={`group relative p-4 rounded-xl border transition-all duration-300 overflow-hidden ${selectedCategory === category
                                         ? 'bg-gradient-to-br from-blue-500 to-cyan-500 border-transparent text-white shadow-lg shadow-blue-500/25'
                                         : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20'
                                         }`}
                                 >
                                     <div className={`text-2xl mb-2 transition-transform duration-300 group-hover:scale-110`}>
-                                        {category.icon}
+                                        {categoryIcons[category] || '📋'}
                                     </div>
-                                    <div className="text-sm font-medium">{category.name}</div>
+                                    <div className="text-sm font-medium">{category}</div>
                                 </button>
                             ))}
                         </div>

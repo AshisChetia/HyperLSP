@@ -39,7 +39,10 @@ function ProviderDetail() {
         try {
             const response = await providerAPI.getProviderById(id)
             if (response.success) {
-                setProvider(response.data)
+                // API returns { provider, services } - merge them
+                const providerData = response.data.provider || response.data
+                const services = response.data.services || []
+                setProvider({ ...providerData, services })
             }
         } catch (error) {
             console.error('Error fetching provider:', error)
@@ -244,7 +247,7 @@ function ProviderDetail() {
                                         <div className="flex items-center gap-4">
                                             <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
                                                 <FaRupeeSign />
-                                                <span className="text-xl">{service.basePrice}</span>
+                                                <span className="text-xl">{service.price || service.basePrice}</span>
                                             </div>
                                             <div className="flex items-center gap-1.5 text-slate-500 text-sm">
                                                 <FaClock />
@@ -288,10 +291,10 @@ function ProviderDetail() {
                                     <div className="flex items-start justify-between mb-3">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center font-bold text-white text-lg">
-                                                {review.userId?.name?.charAt(0) || 'U'}
+                                                {review.user?.name?.charAt(0) || 'U'}
                                             </div>
                                             <div>
-                                                <h4 className="font-bold text-white">{review.userId?.name || 'User'}</h4>
+                                                <h4 className="font-bold text-white">{review.user?.name || 'User'}</h4>
                                                 <p className="text-xs text-slate-500">
                                                     {new Date(review.createdAt).toLocaleDateString('en-IN', {
                                                         day: 'numeric',
