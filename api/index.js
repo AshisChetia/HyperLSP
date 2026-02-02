@@ -461,12 +461,25 @@ app.get('/api/providers/nearby/:pincode', async (req, res) => {
 
 app.get('/api/providers/:id', async (req, res) => {
     try {
-        const provider = await Provider.findById(req.params.id).select('-password');
+        const provider = await Provider.findById(req.params.id).select('-password').lean();
         if (!provider) {
             return res.status(404).json({ success: false, message: 'Provider not found' });
         }
-        const services = await Service.find({ provider: req.params.id, isActive: true });
-        res.json({ success: true, data: { provider, services } });
+
+        // Improve data with dynamic counts
+        const services = await Service.find({ provider: provider._id, isActive: true });
+        const reviewCount = await Booking.countDocuments({
+            provider: provider._id,
+            rating: { $exists: true, $ne: null, $gt: 0 }
+        });
+
+        const providerData = {
+            ...provider,
+            servicesCount: services.length,
+            totalReviews: reviewCount
+        };
+
+        res.json({ success: true, data: { provider: providerData, services } });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -626,7 +639,7 @@ app.get('/api/bookings/reviews/:providerId', async (req, res) => {
     try {
         const reviews = await Booking.find({
             provider: req.params.providerId,
-            rating: { $exists: true }
+            rating: { $exists: true, $ne: null, $gt: 0 }
         })
             .populate('user', 'name')
             .populate('service', 'name')
