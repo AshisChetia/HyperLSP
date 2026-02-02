@@ -333,10 +333,12 @@ app.get('/api/services/my-services', protect, async (req, res) => {
 
 app.post('/api/services', protect, async (req, res) => {
     try {
-        const { name, category, description, price, duration } = req.body;
+        const { name, category, description, price, basePrice, duration } = req.body;
         const service = await Service.create({
             provider: req.user._id,
-            name, category, description, price, duration
+            name, category, description,
+            price: price || basePrice,  // Accept both field names
+            duration
         });
         res.status(201).json({ success: true, data: service });
     } catch (error) {
@@ -346,9 +348,16 @@ app.post('/api/services', protect, async (req, res) => {
 
 app.put('/api/services/:id', protect, async (req, res) => {
     try {
+        // Map basePrice to price if present
+        const updateData = { ...req.body };
+        if (updateData.basePrice && !updateData.price) {
+            updateData.price = updateData.basePrice;
+            delete updateData.basePrice;
+        }
+
         const service = await Service.findOneAndUpdate(
             { _id: req.params.id, provider: req.user._id },
-            req.body,
+            updateData,
             { new: true }
         );
         if (!service) {
