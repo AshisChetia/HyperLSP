@@ -469,13 +469,22 @@ app.get('/api/providers/:id', async (req, res) => {
 
 app.post('/api/bookings', protect, async (req, res) => {
     try {
-        const { providerId, serviceId, scheduledDate, scheduledTime, address, pincode, totalAmount } = req.body;
+        // Accept both API naming conventions and frontend naming conventions
+        const {
+            providerId, serviceId,
+            scheduledDate, scheduledTime, address, pincode, totalAmount,
+            proposedPrice, serviceAddress, preferredDate, preferredTime
+        } = req.body;
 
         const booking = await Booking.create({
             user: req.user._id,
             provider: providerId,
             service: serviceId,
-            scheduledDate, scheduledTime, address, pincode, totalAmount
+            scheduledDate: scheduledDate || preferredDate,
+            scheduledTime: scheduledTime || preferredTime,
+            address: address || serviceAddress,
+            pincode: pincode || req.user.pincode || '000000',
+            totalAmount: totalAmount || proposedPrice
         });
 
         res.status(201).json({ success: true, data: booking });
