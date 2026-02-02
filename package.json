@@ -1,0 +1,28 @@
+{
+  "name": "service-p",
+  "version": "1.0.0",
+  "description": "A full-stack web application connecting customers with local service providers for home services like plumbing, electrical work, cleaning, and more.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AshisChetia/HyperLSP.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AshisChetia/HyperLSP/issues"
+  },
+  "homepage": "https://github.com/AshisChetia/HyperLSP#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.1.5"
+  }
+}
