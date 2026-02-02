@@ -425,15 +425,22 @@ app.get('/api/providers', async (req, res) => {
             providers = providers.filter(p => servicesWithCategory.some(s => s.equals(p._id)));
         }
 
-        // Add service count for each provider
+        // Add service count and review count for each provider
         const providersWithServices = await Promise.all(providers.map(async (provider) => {
             const servicesCount = await Service.countDocuments({ provider: provider._id, isActive: true });
             const services = await Service.find({ provider: provider._id, isActive: true }).limit(3);
+
+            // Calculate review count dynamically from bookings
+            const reviewCount = await Booking.countDocuments({
+                provider: provider._id,
+                rating: { $exists: true, $ne: null, $gt: 0 }
+            });
+
             return {
                 ...provider,
                 servicesCount,
                 services,
-                totalReviews: provider.totalRatings || 0
+                totalReviews: reviewCount
             };
         }));
 
