@@ -1,16 +1,11 @@
 {
-    "version": 2,
     "buildCommand": "cd Frontend && npm install && npm run build",
     "outputDirectory": "Frontend/dist",
+    "framework": null,
     "rewrites": [
         {
-            "source": "/api/(.*)",
-            "destination": "/api"
+            "source": "/api/:path*",
+            "destination": "/api/index.js"
         }
-    ],
-    "functions": {
-        "api/index.js": {
-            "runtime": "@vercel/node@3.x"
-        }
-    }
+    ]
 }
