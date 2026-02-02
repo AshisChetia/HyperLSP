@@ -209,13 +209,13 @@ function MyBookings() {
                                             <div className="flex items-start gap-4">
                                                 {/* Service Icon */}
                                                 <div className="w-14 h-14 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center text-2xl border border-blue-500/20 flex-shrink-0">
-                                                    {booking.serviceId?.name?.charAt(0) || '📋'}
+                                                    {booking.service?.name?.charAt(0) || '📋'}
                                                 </div>
 
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center gap-3 mb-2 flex-wrap">
                                                         <h3 className="text-lg font-bold text-white">
-                                                            {booking.serviceId?.name || 'Service'}
+                                                            {booking.service?.name || 'Service'}
                                                         </h3>
                                                         <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${statusConfig[booking.status]?.bg} ${statusConfig[booking.status]?.text} border ${statusConfig[booking.status]?.border}`}>
                                                             {statusConfig[booking.status]?.icon} {statusConfig[booking.status]?.label}
@@ -223,21 +223,21 @@ function MyBookings() {
                                                     </div>
 
                                                     <p className="text-slate-400 text-sm mb-4">
-                                                        Provider: <span className="text-white font-medium">{booking.providerId?.name}</span>
+                                                        Provider: <span className="text-white font-medium">{booking.provider?.name}</span>
                                                     </p>
 
                                                     <div className="flex flex-wrap gap-4 text-sm">
                                                         <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg text-slate-300">
                                                             <FaCalendarAlt className="text-blue-400" />
-                                                            <span>{formatDate(booking.preferredDate)}</span>
+                                                            <span>{formatDate(booking.scheduledDate)}</span>
                                                         </div>
                                                         <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg text-slate-300">
                                                             <FaClock className="text-blue-400" />
-                                                            <span>{booking.preferredTime}</span>
+                                                            <span>{booking.scheduledTime}</span>
                                                         </div>
                                                         <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg text-slate-300">
                                                             <FaMapMarkerAlt className="text-rose-400" />
-                                                            <span className="truncate max-w-[180px]">{booking.serviceAddress}</span>
+                                                            <span className="truncate max-w-[180px]">{booking.address}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -249,7 +249,7 @@ function MyBookings() {
                                             <div>
                                                 <p className="text-sm text-slate-500">Your Price</p>
                                                 <p className="text-2xl font-bold text-emerald-400 flex items-center gap-1">
-                                                    <FaRupeeSign className="text-lg" />{booking.proposedPrice}
+                                                    <FaRupeeSign className="text-lg" />{booking.totalAmount}
                                                 </p>
                                             </div>
                                             {booking.finalPrice && booking.finalPrice !== booking.proposedPrice && (
@@ -328,8 +328,8 @@ function MyBookings() {
                                             key={star}
                                             onClick={() => setRating(star)}
                                             className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all duration-300 ${star <= rating
-                                                    ? 'bg-amber-500/20 border border-amber-500/30 scale-110'
-                                                    : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                                                ? 'bg-amber-500/20 border border-amber-500/30 scale-110'
+                                                : 'bg-white/5 border border-white/10 hover:bg-white/10'
                                                 }`}
                                         >
                                             {star <= rating ? '⭐' : '☆'}
