@@ -1,30 +1,50 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
-import connectDB from "../Backend/config/db.js";
+import mongoose from "mongoose";
 import authRoutes from "../Backend/Routes/authRoutes.js";
 import serviceRoutes from "../Backend/Routes/serviceRoutes.js";
 import providerRoutes from "../Backend/Routes/providerRoutes.js";
 import bookingRoutes from "../Backend/Routes/bookingRoutes.js";
 
-dotenv.config();
-connectDB();
-
 const app = express();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Log all requests
-app.use((req, res, next) => {
-    console.log(`${req.method} ${req.path}`, req.body);
-    next();
+// MongoDB connection with caching for serverless
+let isConnected = false;
+
+const connectDB = async () => {
+    if (isConnected) {
+        console.log('Using existing MongoDB connection');
+        return;
+    }
+
+    try {
+        const conn = await mongoose.connect(process.env.MONGO_URI);
+        isConnected = true;
+        console.log(`MongoDB Connected: ${conn.connection.host}`);
+    } catch (error) {
+        console.error(`MongoDB Error: ${error.message}`);
+        throw error;
+    }
+};
+
+// Connect to DB on each request (cached)
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Database connection failed' });
+    }
 });
 
 // Routes
 app.get('/api', (req, res) => {
-    res.json({ message: "HyperLSP API is running" });
+    res.json({ message: "HyperLSP API is running", connected: isConnected });
 });
 
 app.get('/api/health', (req, res) => {
