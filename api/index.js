@@ -596,11 +596,16 @@ app.put('/api/bookings/:id/rate', protect, async (req, res) => {
         }
 
         // Update provider rating
-        const reviews = await Booking.find({ provider: booking.provider, rating: { $exists: true } });
-        const avgRating = reviews.reduce((sum, b) => sum + b.rating, 0) / reviews.length;
+        const reviews = await Booking.find({
+            provider: booking.provider,
+            rating: { $exists: true, $ne: null, $gt: 0 }
+        });
+        const avgRating = reviews.length > 0
+            ? reviews.reduce((sum, b) => sum + b.rating, 0) / reviews.length
+            : 0;
 
         await Provider.findByIdAndUpdate(booking.provider, {
-            rating: avgRating,
+            rating: Math.round(avgRating * 10) / 10,  // Round to 1 decimal
             totalRatings: reviews.length
         });
 
