@@ -1,26 +1,16 @@
 {
     "version": 2,
-    "builds": [
+    "buildCommand": "cd Frontend && npm install && npm run build",
+    "outputDirectory": "Frontend/dist",
+    "rewrites": [
         {
-            "src": "Frontend/**",
-            "use": "@vercel/static-build",
-            "config": {
-                "distDir": "Frontend/dist"
-            }
-        },
-        {
-            "src": "api/index.js",
-            "use": "@vercel/node"
+            "source": "/api/(.*)",
+            "destination": "/api"
         }
     ],
-    "routes": [
-        {
-            "src": "/api/(.*)",
-            "dest": "/api/index.js"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/Frontend/$1"
+    "functions": {
+        "api/index.js": {
+            "runtime": "@vercel/node@3.x"
         }
-    ]
+    }
 }
