@@ -316,8 +316,8 @@ function MyServices() {
                                     className="w-full px-4 py-4 bg-slate-700/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-orange-500/50 focus:bg-slate-700 transition-all appearance-none cursor-pointer"
                                 >
                                     {categories.map((cat) => (
-                                        <option key={cat.id} value={cat.name} className="bg-slate-800">
-                                            {cat.icon} {cat.name}
+                                        <option key={cat} value={cat} className="bg-slate-800">
+                                            {categoryIcons[cat] || '📋'} {cat}
                                         </option>
                                     ))}
                                 </select>
