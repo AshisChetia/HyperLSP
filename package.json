@@ -4,6 +4,8 @@
   "description": "A full-stack web application connecting customers with local service providers for home services like plumbing, electrical work, cleaning, and more.",
   "main": "index.js",
   "scripts": {
+    "build": "cd Frontend && npm install && npm run build",
+    "vercel-build": "cd Frontend && npm install && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
