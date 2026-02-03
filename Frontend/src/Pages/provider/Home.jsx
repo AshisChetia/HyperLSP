@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { FaBriefcase, FaUser, FaSignOutAlt, FaCalendarAlt, FaChartLine, FaStar, FaRupeeSign, FaCheck, FaTimes, FaMapMarkerAlt, FaArrowRight, FaClock } from 'react-icons/fa'
+import { FaBriefcase, FaUser, FaSignOutAlt, FaCalendarAlt, FaChartLine, FaStar, FaRupeeSign, FaCheck, FaTimes, FaMapMarkerAlt, FaArrowRight, FaClock, FaCheckCircle } from 'react-icons/fa'
 import { bookingAPI } from '../../services/api'
 import { HiSparkles } from 'react-icons/hi'
 import { useEffect, useState } from 'react'
@@ -113,7 +113,7 @@ function Home() {
             </nav>
 
             {/* Main Content */}
-            <div className={`relative pt-32 pb-12 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : ''}`}>
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Welcome Section */}
                     <div className="relative overflow-hidden bg-gradient-to-r from-orange-500 to-amber-600 rounded-3xl p-8 lg:p-12 mb-8 shadow-2xl shadow-orange-500/20">
