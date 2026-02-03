@@ -233,15 +233,15 @@ function MyBookings() {
                                                         <div className="flex flex-wrap gap-4 text-sm">
                                                             <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg text-slate-300">
                                                                 <FaCalendarAlt className="text-blue-400" />
-                                                                <span>{formatDate(booking.scheduledDate)}</span>
+                                                                <span>{formatDate(booking.scheduledDate || booking.preferredDate)}</span>
                                                             </div>
                                                             <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg text-slate-300">
                                                                 <FaClock className="text-blue-400" />
-                                                                <span>{booking.scheduledTime}</span>
+                                                                <span>{booking.scheduledTime || booking.preferredTime}</span>
                                                             </div>
                                                             <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg text-slate-300">
                                                                 <FaMapMarkerAlt className="text-rose-400" />
-                                                                <span className="truncate max-w-[180px]">{booking.address}</span>
+                                                                <span className="truncate max-w-[180px]">{booking.address || booking.serviceAddress}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -253,10 +253,10 @@ function MyBookings() {
                                                 <div>
                                                     <p className="text-sm text-slate-500">Your Price</p>
                                                     <p className="text-2xl font-bold text-emerald-400 flex items-center gap-1">
-                                                        <FaRupeeSign className="text-lg" />{booking.totalAmount}
+                                                        <FaRupeeSign className="text-lg" />{booking.totalAmount || booking.proposedPrice}
                                                     </p>
                                                 </div>
-                                                {booking.finalPrice && booking.finalPrice !== booking.proposedPrice && (
+                                                {booking.finalPrice && booking.finalPrice !== (booking.totalAmount || booking.proposedPrice) && (
                                                     <div>
                                                         <p className="text-sm text-slate-500">Final Price</p>
                                                         <p className="text-xl font-bold text-blue-400 flex items-center gap-1">

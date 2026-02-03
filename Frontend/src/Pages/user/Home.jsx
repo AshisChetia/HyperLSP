@@ -276,7 +276,7 @@ function Home() {
                                                             <span className="w-1 h-1 bg-slate-600 rounded-full"></span>
                                                             <span className="flex items-center gap-1">
                                                                 <FaClock className="text-xs" />
-                                                                {new Date(booking.preferredDate).toLocaleDateString()}
+                                                                {new Date(booking.preferredDate || booking.scheduledDate).toLocaleDateString()}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -285,12 +285,12 @@ function Home() {
                                                 <div className="flex items-center gap-4 justify-between md:justify-end">
                                                     <div className="flex items-center gap-1 text-slate-400 text-sm">
                                                         <FaMapMarkerAlt className="text-rose-400" />
-                                                        <span className="truncate max-w-[120px]">{booking.serviceAddress}</span>
+                                                        <span className="truncate max-w-[120px]">{booking.serviceAddress || booking.address}</span>
                                                     </div>
 
                                                     <div className="font-bold text-white flex items-center">
                                                         <FaRupeeSign className="text-emerald-400" />
-                                                        <span>{booking.proposedPrice}</span>
+                                                        <span>{booking.proposedPrice || booking.totalAmount}</span>
                                                     </div>
 
                                                     <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize ${statusConfig[booking.status]?.bg} ${statusConfig[booking.status]?.text} border ${statusConfig[booking.status]?.border}`}>
