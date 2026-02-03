@@ -258,50 +258,55 @@ function Home() {
                             </div>
                         ) : (
                             <div className="space-y-4">
-                                {recentBookings.map((booking) => (
-                                    <div key={booking._id} className="group bg-slate-800/50 border border-white/5 rounded-xl p-4 hover:bg-slate-800 hover:border-white/10 transition-all duration-300">
-                                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center text-xl font-bold text-blue-400 border border-blue-500/20">
-                                                    {booking.serviceId?.name?.charAt(0) || 'S'}
-                                                </div>
-                                                <div>
-                                                    <h3 className="font-semibold text-white group-hover:text-blue-400 transition-colors">{booking.serviceId?.name}</h3>
-                                                    <div className="flex items-center gap-3 text-sm text-slate-400">
-                                                        <span>{booking.providerId?.name}</span>
-                                                        <span className="w-1 h-1 bg-slate-600 rounded-full"></span>
-                                                        <span className="flex items-center gap-1">
-                                                            <FaClock className="text-xs" />
-                                                            {new Date(booking.preferredDate).toLocaleDateString()}
-                                                        </span>
+                                {recentBookings.map((booking) => {
+                                    const service = booking.serviceId || booking.service || {}
+                                    const provider = booking.providerId || booking.provider || {}
+
+                                    return (
+                                        <div key={booking._id} className="group bg-slate-800/50 border border-white/5 rounded-xl p-4 hover:bg-slate-800 hover:border-white/10 transition-all duration-300">
+                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center text-xl font-bold text-blue-400 border border-blue-500/20">
+                                                        {service?.name?.charAt(0) || 'S'}
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="font-semibold text-white group-hover:text-blue-400 transition-colors">{service?.name || 'Service Name Unavailable'}</h3>
+                                                        <div className="flex items-center gap-3 text-sm text-slate-400">
+                                                            <span>{provider?.name || 'Provider Unavailable'}</span>
+                                                            <span className="w-1 h-1 bg-slate-600 rounded-full"></span>
+                                                            <span className="flex items-center gap-1">
+                                                                <FaClock className="text-xs" />
+                                                                {new Date(booking.preferredDate).toLocaleDateString()}
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            <div className="flex items-center gap-4 justify-between md:justify-end">
-                                                <div className="flex items-center gap-1 text-slate-400 text-sm">
-                                                    <FaMapMarkerAlt className="text-rose-400" />
-                                                    <span className="truncate max-w-[120px]">{booking.serviceAddress}</span>
+                                                <div className="flex items-center gap-4 justify-between md:justify-end">
+                                                    <div className="flex items-center gap-1 text-slate-400 text-sm">
+                                                        <FaMapMarkerAlt className="text-rose-400" />
+                                                        <span className="truncate max-w-[120px]">{booking.serviceAddress}</span>
+                                                    </div>
+
+                                                    <div className="font-bold text-white flex items-center">
+                                                        <FaRupeeSign className="text-emerald-400" />
+                                                        <span>{booking.proposedPrice}</span>
+                                                    </div>
+
+                                                    <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize ${statusConfig[booking.status]?.bg} ${statusConfig[booking.status]?.text} border ${statusConfig[booking.status]?.border}`}>
+                                                        {statusConfig[booking.status]?.icon} {booking.status}
+                                                    </span>
                                                 </div>
-
-                                                <div className="font-bold text-white flex items-center">
-                                                    <FaRupeeSign className="text-emerald-400" />
-                                                    <span>{booking.proposedPrice}</span>
-                                                </div>
-
-                                                <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize ${statusConfig[booking.status]?.bg} ${statusConfig[booking.status]?.text} border ${statusConfig[booking.status]?.border}`}>
-                                                    {statusConfig[booking.status]?.icon} {booking.status}
-                                                </span>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    )
+                                })}
                             </div>
                         )}
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 

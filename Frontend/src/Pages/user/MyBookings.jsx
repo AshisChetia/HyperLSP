@@ -200,107 +200,112 @@ function MyBookings() {
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {filteredBookings.map((booking) => (
-                            <div key={booking._id} className="group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-white/[0.07] hover:border-white/20 transition-all duration-300">
-                                <div className="p-6">
-                                    <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
-                                        {/* Left Content */}
-                                        <div className="flex-1">
-                                            <div className="flex items-start gap-4">
-                                                {/* Service Icon */}
-                                                <div className="w-14 h-14 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center text-2xl border border-blue-500/20 flex-shrink-0">
-                                                    {booking.service?.name?.charAt(0) || '📋'}
-                                                </div>
+                        {filteredBookings.map((booking) => {
+                            const service = booking.serviceId || booking.service || {}
+                            const provider = booking.providerId || booking.provider || {}
 
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center gap-3 mb-2 flex-wrap">
-                                                        <h3 className="text-lg font-bold text-white">
-                                                            {booking.service?.name || 'Service'}
-                                                        </h3>
-                                                        <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${statusConfig[booking.status]?.bg} ${statusConfig[booking.status]?.text} border ${statusConfig[booking.status]?.border}`}>
-                                                            {statusConfig[booking.status]?.icon} {statusConfig[booking.status]?.label}
-                                                        </span>
+                            return (
+                                <div key={booking._id} className="group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-white/[0.07] hover:border-white/20 transition-all duration-300">
+                                    <div className="p-6">
+                                        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+                                            {/* Left Content */}
+                                            <div className="flex-1">
+                                                <div className="flex items-start gap-4">
+                                                    {/* Service Icon */}
+                                                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center text-2xl border border-blue-500/20 flex-shrink-0">
+                                                        {service?.name?.charAt(0) || '📋'}
                                                     </div>
 
-                                                    <p className="text-slate-400 text-sm mb-4">
-                                                        Provider: <span className="text-white font-medium">{booking.provider?.name}</span>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-3 mb-2 flex-wrap">
+                                                            <h3 className="text-lg font-bold text-white">
+                                                                {service?.name || 'Service'}
+                                                            </h3>
+                                                            <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${statusConfig[booking.status]?.bg} ${statusConfig[booking.status]?.text} border ${statusConfig[booking.status]?.border}`}>
+                                                                {statusConfig[booking.status]?.icon} {statusConfig[booking.status]?.label}
+                                                            </span>
+                                                        </div>
+
+                                                        <p className="text-slate-400 text-sm mb-4">
+                                                            Provider: <span className="text-white font-medium">{provider?.name}</span>
+                                                        </p>
+
+                                                        <div className="flex flex-wrap gap-4 text-sm">
+                                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg text-slate-300">
+                                                                <FaCalendarAlt className="text-blue-400" />
+                                                                <span>{formatDate(booking.scheduledDate)}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg text-slate-300">
+                                                                <FaClock className="text-blue-400" />
+                                                                <span>{booking.scheduledTime}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg text-slate-300">
+                                                                <FaMapMarkerAlt className="text-rose-400" />
+                                                                <span className="truncate max-w-[180px]">{booking.address}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Right Content - Price */}
+                                            <div className="lg:text-right flex lg:flex-col items-center lg:items-end gap-4 lg:gap-2">
+                                                <div>
+                                                    <p className="text-sm text-slate-500">Your Price</p>
+                                                    <p className="text-2xl font-bold text-emerald-400 flex items-center gap-1">
+                                                        <FaRupeeSign className="text-lg" />{booking.totalAmount}
                                                     </p>
-
-                                                    <div className="flex flex-wrap gap-4 text-sm">
-                                                        <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg text-slate-300">
-                                                            <FaCalendarAlt className="text-blue-400" />
-                                                            <span>{formatDate(booking.scheduledDate)}</span>
-                                                        </div>
-                                                        <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg text-slate-300">
-                                                            <FaClock className="text-blue-400" />
-                                                            <span>{booking.scheduledTime}</span>
-                                                        </div>
-                                                        <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg text-slate-300">
-                                                            <FaMapMarkerAlt className="text-rose-400" />
-                                                            <span className="truncate max-w-[180px]">{booking.address}</span>
-                                                        </div>
-                                                    </div>
                                                 </div>
+                                                {booking.finalPrice && booking.finalPrice !== booking.proposedPrice && (
+                                                    <div>
+                                                        <p className="text-sm text-slate-500">Final Price</p>
+                                                        <p className="text-xl font-bold text-blue-400 flex items-center gap-1">
+                                                            <FaRupeeSign className="text-base" />{booking.finalPrice}
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
 
-                                        {/* Right Content - Price */}
-                                        <div className="lg:text-right flex lg:flex-col items-center lg:items-end gap-4 lg:gap-2">
-                                            <div>
-                                                <p className="text-sm text-slate-500">Your Price</p>
-                                                <p className="text-2xl font-bold text-emerald-400 flex items-center gap-1">
-                                                    <FaRupeeSign className="text-lg" />{booking.totalAmount}
+                                        {/* Provider Notes */}
+                                        {booking.providerNotes && (
+                                            <div className="mt-4 p-4 bg-slate-800/50 border border-white/5 rounded-xl">
+                                                <p className="text-sm text-slate-300">
+                                                    <span className="text-slate-500 font-medium">Provider Note:</span> {booking.providerNotes}
                                                 </p>
                                             </div>
-                                            {booking.finalPrice && booking.finalPrice !== booking.proposedPrice && (
-                                                <div>
-                                                    <p className="text-sm text-slate-500">Final Price</p>
-                                                    <p className="text-xl font-bold text-blue-400 flex items-center gap-1">
-                                                        <FaRupeeSign className="text-base" />{booking.finalPrice}
-                                                    </p>
+                                        )}
+
+                                        {/* Actions */}
+                                        <div className="mt-5 flex flex-wrap gap-3 pt-4 border-t border-white/5">
+                                            {booking.status === 'pending' && (
+                                                <button
+                                                    onClick={() => handleCancel(booking._id)}
+                                                    className="px-5 py-2.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-xl font-medium hover:bg-rose-500/20 transition-all duration-300 flex items-center gap-2"
+                                                >
+                                                    <FaTimes /> Cancel Booking
+                                                </button>
+                                            )}
+                                            {booking.status === 'completed' && !booking.rating && (
+                                                <button
+                                                    onClick={() => openRatingModal(booking)}
+                                                    className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-amber-500/25 transition-all duration-300 flex items-center gap-2"
+                                                >
+                                                    <FaStar /> Rate & Pay
+                                                </button>
+                                            )}
+                                            {booking.rating && (
+                                                <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                                                    <FaStar className="text-amber-400" />
+                                                    <span className="font-semibold text-amber-400">{booking.rating}/5</span>
+                                                    <span className="text-slate-500 text-sm">• Paid</span>
                                                 </div>
                                             )}
                                         </div>
                                     </div>
-
-                                    {/* Provider Notes */}
-                                    {booking.providerNotes && (
-                                        <div className="mt-4 p-4 bg-slate-800/50 border border-white/5 rounded-xl">
-                                            <p className="text-sm text-slate-300">
-                                                <span className="text-slate-500 font-medium">Provider Note:</span> {booking.providerNotes}
-                                            </p>
-                                        </div>
-                                    )}
-
-                                    {/* Actions */}
-                                    <div className="mt-5 flex flex-wrap gap-3 pt-4 border-t border-white/5">
-                                        {booking.status === 'pending' && (
-                                            <button
-                                                onClick={() => handleCancel(booking._id)}
-                                                className="px-5 py-2.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-xl font-medium hover:bg-rose-500/20 transition-all duration-300 flex items-center gap-2"
-                                            >
-                                                <FaTimes /> Cancel Booking
-                                            </button>
-                                        )}
-                                        {booking.status === 'completed' && !booking.rating && (
-                                            <button
-                                                onClick={() => openRatingModal(booking)}
-                                                className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-amber-500/25 transition-all duration-300 flex items-center gap-2"
-                                            >
-                                                <FaStar /> Rate & Pay
-                                            </button>
-                                        )}
-                                        {booking.rating && (
-                                            <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-                                                <FaStar className="text-amber-400" />
-                                                <span className="font-semibold text-amber-400">{booking.rating}/5</span>
-                                                <span className="text-slate-500 text-sm">• Paid</span>
-                                            </div>
-                                        )}
-                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            )
+                        })}
                     </div>
                 )}
             </div>
