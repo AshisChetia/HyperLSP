@@ -63,8 +63,16 @@ function Home() {
         cancelled: { bg: 'bg-slate-500/20', text: 'text-slate-400', border: 'border-slate-500/30' }
     }
 
+    // Robust stats destructuring (Local || Production)
+    const totalBookings = stats.totalBookings || 0
+    const completedJobs = stats.completedJobs || stats.completed || 0
+    const pendingRequests = stats.pendingRequests || stats.pending || 0
+    // Fix: Ensure we display earnings correctly even if 0
+    const totalEarnings = stats.totalEarnings !== undefined ? stats.totalEarnings : (stats.earnings || 0)
+    const averageRating = stats.avgRating || 0
+
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <div className="min-h-screen bg-slate-900">
             {/* Animated Background */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-20 left-10 w-72 h-72 bg-orange-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -105,153 +113,135 @@ function Home() {
             </nav>
 
             {/* Main Content */}
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Welcome Section */}
-                <div className="relative bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 rounded-3xl p-8 mb-8 overflow-hidden">
-                    <div className="absolute inset-0 bg-black/10"></div>
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+            <div className={`relative pt-32 pb-12 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : ''}`}>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Welcome Section */}
+                    <div className="relative overflow-hidden bg-gradient-to-r from-orange-500 to-amber-600 rounded-3xl p-8 lg:p-12 mb-8 shadow-2xl shadow-orange-500/20">
+                        {/* ... background blobs ... */}
+                        <div className="absolute inset-0 bg-black/10"></div>
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+                        <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full blur-3xl -ml-24 -mb-24"></div>
 
-                    <div className="relative">
-                        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                            Welcome back, {provider?.name || 'Provider'}! 🛠️
-                        </h1>
-                        <p className="text-orange-100 text-lg">Manage your services and grow your business</p>
+                        <div className="relative z-10">
+                            <h1 className="text-3xl lg:text-5xl font-bold text-white mb-4">
+                                Welcome back, {provider?.name?.split(' ')[0]}! 🛠️
+                            </h1>
+                            <p className="text-orange-100 text-lg max-w-2xl">
+                                Manage your services and grow your business
+                            </p>
+                        </div>
                     </div>
-                </div>
 
-                {/* Stats Overview */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="w-12 h-12 bg-blue-500/20 border border-blue-500/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                        {/* Total Bookings */}
+                        <div className="bg-slate-800/50 backdrop-blur-xl border border-white/5 p-6 rounded-2xl hover:bg-slate-800 transition-all duration-300 group">
+                            <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <FaCalendarAlt className="text-blue-400 text-xl" />
                             </div>
+                            <h3 className="text-3xl font-bold text-white mb-1">{totalBookings}</h3>
+                            <p className="text-slate-400 text-sm">Total Bookings</p>
                         </div>
-                        <div className="text-3xl font-bold text-white mb-1">{stats.totalBookings}</div>
-                        <p className="text-slate-400 text-sm">Total Bookings</p>
-                    </div>
 
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="w-12 h-12 bg-emerald-500/20 border border-emerald-500/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                                <FaCheck className="text-emerald-400 text-xl" />
+                        {/* Completed Jobs */}
+                        <div className="bg-slate-800/50 backdrop-blur-xl border border-white/5 p-6 rounded-2xl hover:bg-slate-800 transition-all duration-300 group">
+                            <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <FaCheckCircle className="text-emerald-400 text-xl" />
                             </div>
+                            <h3 className="text-3xl font-bold text-white mb-1">{completedJobs}</h3>
+                            <p className="text-slate-400 text-sm">Completed Jobs</p>
                         </div>
-                        <div className="text-3xl font-bold text-emerald-400 mb-1">{stats.completedJobs}</div>
-                        <p className="text-slate-400 text-sm">Completed Jobs</p>
-                    </div>
 
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="w-12 h-12 bg-orange-500/20 border border-orange-500/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        {/* Pending Requests */}
+                        <div className="bg-slate-800/50 backdrop-blur-xl border border-white/5 p-6 rounded-2xl hover:bg-slate-800 transition-all duration-300 group">
+                            <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <FaClock className="text-orange-400 text-xl" />
                             </div>
+                            <h3 className="text-3xl font-bold text-white mb-1">{pendingRequests}</h3>
+                            <p className="text-slate-400 text-sm">Pending Requests</p>
                         </div>
-                        <div className="text-3xl font-bold text-orange-400 mb-1">{stats.pendingRequests}</div>
-                        <p className="text-slate-400 text-sm">Pending Requests</p>
-                    </div>
 
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="w-12 h-12 bg-amber-500/20 border border-amber-500/30 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        {/* Average Rating */}
+                        <div className="bg-slate-800/50 backdrop-blur-xl border border-white/5 p-6 rounded-2xl hover:bg-slate-800 transition-all duration-300 group">
+                            <div className="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <FaStar className="text-amber-400 text-xl" />
                             </div>
+                            <h3 className="text-3xl font-bold text-white mb-1">{typeof averageRating === 'number' ? averageRating.toFixed(1) : '0.0'}</h3>
+                            <p className="text-slate-400 text-sm">Average Rating</p>
                         </div>
-                        <div className="flex items-center gap-2 text-3xl font-bold text-amber-400 mb-1">
-                            {typeof stats.avgRating === 'number' ? stats.avgRating.toFixed(1) : '0.0'}
-                        </div>
-                        <p className="text-slate-400 text-sm">Average Rating</p>
                     </div>
-                </div>
 
-                {/* Quick Actions */}
-                <div className="grid md:grid-cols-3 gap-4 mb-8">
-                    <Link to="/provider/services" className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1">
-                        <div className="w-14 h-14 bg-gradient-to-br from-orange-500/20 to-amber-500/20 border border-orange-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                            <FaBriefcase className="text-orange-400 text-2xl" />
-                        </div>
-                        <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                            Manage Services
-                            <FaArrowRight className="text-sm text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </h3>
-                        <p className="text-slate-400 text-sm">Add or edit your service offerings</p>
-                    </Link>
-
-                    <Link to="/provider/bookings" className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1">
-                        <div className="w-14 h-14 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                            <FaCalendarAlt className="text-emerald-400 text-2xl" />
-                        </div>
-                        <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                            View Bookings
-                            <FaArrowRight className="text-sm text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </h3>
-                        <p className="text-slate-400 text-sm">See upcoming and past bookings</p>
-                    </Link>
-
-                    <Link to="/provider/analytics" className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-1">
-                        <div className="w-14 h-14 bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                            <FaChartLine className="text-purple-400 text-2xl" />
-                        </div>
-                        <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                            Analytics
-                            <FaArrowRight className="text-sm text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </h3>
-                        <p className="text-slate-400 text-sm">Track your performance and earnings</p>
-                    </Link>
-                </div>
-
-                {/* Recent Bookings */}
-                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-bold text-white">Recent Booking Requests</h2>
-                        <Link to="/provider/bookings" className="flex items-center gap-2 text-orange-400 font-medium hover:text-orange-300 transition-colors group">
-                            View All
-                            <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform" />
+                    {/* Quick Actions */}
+                    <div className="grid md:grid-cols-3 gap-6 mb-8">
+                        <Link to="/provider/services" className="bg-slate-800/50 border border-white/5 p-6 rounded-2xl hover:bg-slate-800 transition-all group">
+                            <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">💼</div>
+                            <h3 className="text-lg font-bold text-white mb-2">Manage Services</h3>
+                            <p className="text-slate-400 text-sm">Add or edit your service offerings</p>
+                        </Link>
+                        <Link to="/provider/bookings" className="bg-slate-800/50 border border-white/5 p-6 rounded-2xl hover:bg-slate-800 transition-all group">
+                            <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">📅</div>
+                            <h3 className="text-lg font-bold text-white mb-2">View Bookings</h3>
+                            <p className="text-slate-400 text-sm">See upcoming and past bookings</p>
+                        </Link>
+                        <Link to="/provider/analytics" className="bg-slate-800/50 border border-white/5 p-6 rounded-2xl hover:bg-slate-800 transition-all group">
+                            <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">📈</div>
+                            <h3 className="text-lg font-bold text-white mb-2">Analytics</h3>
+                            <p className="text-slate-400 text-sm">Track your performance and earnings</p>
                         </Link>
                     </div>
 
-                    {recentBookings.length === 0 ? (
-                        <div className="text-center py-16">
-                            <div className="w-20 h-20 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <span className="text-4xl">📋</span>
-                            </div>
-                            <p className="text-slate-400 mb-2">No booking requests yet</p>
-                            <p className="text-sm text-slate-500">Complete your profile to start receiving bookings!</p>
+                    {/* Recent Requests */}
+                    <div className="bg-slate-800/50 border border-white/5 rounded-2xl p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-xl font-bold text-white">Recent Booking Requests</h2>
+                            <Link to="/provider/bookings" className="text-orange-400 hover:text-orange-300 flex items-center gap-2 text-sm font-semibold transition-colors">
+                                View All <FaArrowRight />
+                            </Link>
                         </div>
-                    ) : (
-                        <div className="space-y-3">
-                            {recentBookings.map((booking) => (
-                                <div key={booking._id} className="flex flex-col lg:flex-row lg:items-center justify-between p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all duration-300 gap-4">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-lg font-bold text-white">
-                                            {booking.userId?.name?.charAt(0) || 'U'}
-                                        </div>
-                                        <div>
-                                            <h3 className="font-bold text-white">{booking.serviceId?.name}</h3>
-                                            <p className="text-sm text-slate-400">{booking.userId?.name} • {new Date(booking.preferredDate).toLocaleDateString()}</p>
-                                        </div>
-                                    </div>
 
-                                    <div className="flex items-center gap-4 justify-between lg:justify-end flex-1">
-                                        <div className="flex items-center gap-2 text-slate-400 text-sm">
-                                            <FaMapMarkerAlt className="text-rose-400" />
-                                            <span className="truncate max-w-[150px]">{booking.serviceAddress}</span>
-                                        </div>
-
-                                        <div className="font-bold text-emerald-400 flex items-center">
-                                            <FaRupeeSign className="text-sm" />
-                                            {booking.proposedPrice}
-                                        </div>
-
-                                        <span className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize border ${statusConfig[booking.status]?.bg} ${statusConfig[booking.status]?.text} ${statusConfig[booking.status]?.border}`}>
-                                            {booking.status}
-                                        </span>
-                                    </div>
+                        <div className="space-y-4">
+                            {recentBookings.length === 0 ? (
+                                <div className="text-center py-8 text-slate-500">
+                                    No recent booking requests
                                 </div>
-                            ))}
+                            ) : (
+                                recentBookings.map((booking) => {
+                                    // Robust data handling
+                                    const user = booking.userId || booking.user || {}
+                                    const service = booking.serviceId || booking.service || {}
+                                    const date = booking.preferredDate || booking.scheduledDate
+
+                                    return (
+                                        <div key={booking._id} className="bg-slate-900/50 rounded-xl p-4 flex items-center justify-between group hover:bg-slate-900 transition-all">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center text-white font-bold text-xl">
+                                                    {user.name?.charAt(0) || 'U'}
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-bold text-white">{user.name || 'Unknown User'}</h4>
+                                                    <p className="text-slate-400 text-sm">
+                                                        {service.name || 'Service'} • {date ? new Date(date).toLocaleDateString() : 'Invalid Date'}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-4">
+                                                {booking.status === 'pending' && (
+                                                    <div className="flex gap-2">
+                                                        <FaClock className="text-orange-400" />
+                                                    </div>
+                                                )}
+                                                <span className={`px-3 py-1 rounded-lg text-xs font-bold
+                                                ${booking.status === 'pending' ? 'bg-orange-500/20 text-orange-400' :
+                                                        booking.status === 'accepted' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-400'}`}>
+                                                    {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            )}
                         </div>
-                    )}
+                    </div>
                 </div>
             </div>
         </div>

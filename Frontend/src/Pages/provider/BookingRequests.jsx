@@ -173,8 +173,8 @@ function BookingRequests() {
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`px-4 py-2.5 rounded-xl font-medium whitespace-nowrap transition-all duration-300 ${activeTab === tab
-                                    ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/25'
-                                    : 'bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10 hover:text-white'
+                                ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/25'
+                                : 'bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10 hover:text-white'
                                 }`}
                         >
                             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -201,124 +201,135 @@ function BookingRequests() {
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {filteredBookings.map((booking) => (
-                            <div key={booking._id} className={`bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300`}>
-                                <div className="p-6">
-                                    <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
-                                        {/* Left - Booking Details */}
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-3 mb-4">
-                                                <span className="text-2xl">{statusConfig[booking.status]?.icon}</span>
-                                                <h3 className="text-lg font-bold text-white">
-                                                    {booking.serviceId?.name || 'Service'}
-                                                </h3>
-                                                <span className={`px-3 py-1 rounded-lg text-xs font-bold border ${statusConfig[booking.status]?.bg} ${statusConfig[booking.status]?.text} ${statusConfig[booking.status]?.border}`}>
-                                                    {statusConfig[booking.status]?.label}
-                                                </span>
-                                            </div>
+                        {filteredBookings.map((booking) => {
+                            // Robust data handling to support both Local and Production schemas
+                            const user = booking.userId || booking.user || {}
+                            const service = booking.serviceId || booking.service || {}
+                            const date = booking.preferredDate || booking.scheduledDate
+                            const time = booking.preferredTime || booking.scheduledTime
+                            const address = booking.serviceAddress || booking.address
+                            const price = booking.finalPrice || booking.proposedPrice || booking.totalAmount
+                            const basePrice = booking.basePrice || service.price || 0
 
-                                            {/* Customer Info */}
-                                            <div className="bg-slate-800/50 border border-white/5 rounded-xl p-4 mb-4">
-                                                <p className="font-semibold text-white mb-3">Customer Details</p>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                                                    <div className="flex items-center gap-2 text-slate-400">
-                                                        <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-500 rounded-lg flex items-center justify-center text-white font-bold text-xs">
-                                                            {booking.userId?.name?.charAt(0) || 'U'}
+                            return (
+                                <div key={booking._id} className={`bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300`}>
+                                    <div className="p-6">
+                                        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                                            {/* Left - Booking Details */}
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-3 mb-4">
+                                                    <span className="text-2xl">{statusConfig[booking.status]?.icon}</span>
+                                                    <h3 className="text-lg font-bold text-white">
+                                                        {service.name || 'Service Name Unavailable'}
+                                                    </h3>
+                                                    <span className={`px-3 py-1 rounded-lg text-xs font-bold border ${statusConfig[booking.status]?.bg} ${statusConfig[booking.status]?.text} ${statusConfig[booking.status]?.border}`}>
+                                                        {statusConfig[booking.status]?.label}
+                                                    </span>
+                                                </div>
+
+                                                {/* Customer Info */}
+                                                <div className="bg-slate-800/50 border border-white/5 rounded-xl p-4 mb-4">
+                                                    <p className="font-semibold text-white mb-3">Customer Details</p>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                                                        <div className="flex items-center gap-2 text-slate-400">
+                                                            <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-500 rounded-lg flex items-center justify-center text-white font-bold text-xs">
+                                                                {user.name?.charAt(0) || 'U'}
+                                                            </div>
+                                                            <span className="text-white">{user.name || 'Unknown User'}</span>
                                                         </div>
-                                                        <span className="text-white">{booking.userId?.name}</span>
+                                                        <div className="flex items-center gap-2 text-slate-400">
+                                                            <FaPhone className="text-emerald-400" />
+                                                            <span>{user.phone || 'No Phone'}</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2 text-slate-400 md:col-span-2">
+                                                            <FaMapMarkerAlt className="text-rose-400" />
+                                                            <span>{address || 'No Address'}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Schedule */}
+                                                <div className="flex flex-wrap gap-4 text-sm">
+                                                    <div className="flex items-center gap-2 text-slate-400">
+                                                        <div className="w-8 h-8 bg-orange-500/20 border border-orange-500/30 rounded-lg flex items-center justify-center">
+                                                            <FaCalendarAlt className="text-orange-400 text-xs" />
+                                                        </div>
+                                                        <span className="text-white">{date ? formatDate(date) : 'Invalid Date'}</span>
                                                     </div>
                                                     <div className="flex items-center gap-2 text-slate-400">
-                                                        <FaPhone className="text-emerald-400" />
-                                                        <span>{booking.userId?.phone}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-2 text-slate-400 md:col-span-2">
-                                                        <FaMapMarkerAlt className="text-rose-400" />
-                                                        <span>{booking.serviceAddress}</span>
+                                                        <div className="w-8 h-8 bg-purple-500/20 border border-purple-500/30 rounded-lg flex items-center justify-center">
+                                                            <FaClock className="text-purple-400 text-xs" />
+                                                        </div>
+                                                        <span className="text-white">{time || 'Any Time'}</span>
                                                     </div>
                                                 </div>
+
+                                                {booking.userNotes && (
+                                                    <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                                                        <p className="text-sm text-blue-300">
+                                                            <strong>Customer Note:</strong> {booking.userNotes}
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
 
-                                            {/* Schedule */}
-                                            <div className="flex flex-wrap gap-4 text-sm">
-                                                <div className="flex items-center gap-2 text-slate-400">
-                                                    <div className="w-8 h-8 bg-orange-500/20 border border-orange-500/30 rounded-lg flex items-center justify-center">
-                                                        <FaCalendarAlt className="text-orange-400 text-xs" />
-                                                    </div>
-                                                    <span className="text-white">{formatDate(booking.preferredDate)}</span>
-                                                </div>
-                                                <div className="flex items-center gap-2 text-slate-400">
-                                                    <div className="w-8 h-8 bg-purple-500/20 border border-purple-500/30 rounded-lg flex items-center justify-center">
-                                                        <FaClock className="text-purple-400 text-xs" />
-                                                    </div>
-                                                    <span className="text-white">{booking.preferredTime}</span>
-                                                </div>
-                                            </div>
-
-                                            {booking.userNotes && (
-                                                <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-                                                    <p className="text-sm text-blue-300">
-                                                        <strong>Customer Note:</strong> {booking.userNotes}
+                                            {/* Right - Price & Actions */}
+                                            <div className="lg:text-right lg:min-w-[200px]">
+                                                <div className="mb-4">
+                                                    <p className="text-sm text-slate-500 mb-1">Base Price</p>
+                                                    <p className="text-slate-400 flex items-center lg:justify-end gap-1">
+                                                        <FaRupeeSign className="text-sm" />{basePrice}
                                                     </p>
                                                 </div>
-                                            )}
-                                        </div>
-
-                                        {/* Right - Price & Actions */}
-                                        <div className="lg:text-right lg:min-w-[200px]">
-                                            <div className="mb-4">
-                                                <p className="text-sm text-slate-500 mb-1">Base Price</p>
-                                                <p className="text-slate-400 flex items-center lg:justify-end gap-1">
-                                                    <FaRupeeSign className="text-sm" />{booking.basePrice}
-                                                </p>
-                                            </div>
-                                            <div className="mb-4">
-                                                <p className="text-sm text-slate-500 mb-1">Customer's Offer</p>
-                                                <p className={`text-2xl font-bold flex items-center lg:justify-end gap-1 ${booking.proposedPrice >= booking.basePrice ? 'text-emerald-400' : 'text-orange-400'}`}>
-                                                    <FaRupeeSign className="text-lg" />{booking.proposedPrice}
-                                                </p>
-                                            </div>
-
-                                            {/* Action Buttons */}
-                                            {booking.status === 'pending' && (
-                                                <div className="flex lg:flex-col gap-2">
-                                                    <button
-                                                        onClick={() => handleAccept(booking._id, booking.proposedPrice)}
-                                                        disabled={processingId === booking._id}
-                                                        className="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-emerald-500/25 flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
-                                                    >
-                                                        <FaCheck /> Accept
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleReject(booking._id)}
-                                                        disabled={processingId === booking._id}
-                                                        className="flex-1 px-4 py-3 bg-rose-500/10 border border-rose-500/30 text-rose-400 rounded-xl font-semibold hover:bg-rose-500/20 flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
-                                                    >
-                                                        <FaTimes /> Reject
-                                                    </button>
+                                                <div className="mb-4">
+                                                    <p className="text-sm text-slate-500 mb-1">Total Amount</p>
+                                                    <p className={`text-2xl font-bold flex items-center lg:justify-end gap-1 ${price >= basePrice ? 'text-emerald-400' : 'text-orange-400'}`}>
+                                                        <FaRupeeSign className="text-lg" />{price}
+                                                    </p>
                                                 </div>
-                                            )}
 
-                                            {booking.status === 'accepted' && (
-                                                <button
-                                                    onClick={() => handleComplete(booking._id)}
-                                                    disabled={processingId === booking._id}
-                                                    className="w-full px-4 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-orange-500/25 flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
-                                                >
-                                                    <FaCheck /> Mark Completed
-                                                </button>
-                                            )}
+                                                {/* Action Buttons */}
+                                                {booking.status === 'pending' && (
+                                                    <div className="flex lg:flex-col gap-2">
+                                                        <button
+                                                            onClick={() => handleAccept(booking._id, price)}
+                                                            disabled={processingId === booking._id}
+                                                            className="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-emerald-500/25 flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
+                                                        >
+                                                            <FaCheck /> Accept
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleReject(booking._id)}
+                                                            disabled={processingId === booking._id}
+                                                            className="flex-1 px-4 py-3 bg-rose-500/10 border border-rose-500/30 text-rose-400 rounded-xl font-semibold hover:bg-rose-500/20 flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
+                                                        >
+                                                            <FaTimes /> Reject
+                                                        </button>
+                                                    </div>
+                                                )}
 
-                                            {booking.status === 'completed' && booking.rating && (
-                                                <div className="text-center bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
-                                                    <p className="text-sm text-slate-500 mb-1">Rating</p>
-                                                    <p className="text-2xl">{'⭐'.repeat(booking.rating)}</p>
-                                                </div>
-                                            )}
+                                                {booking.status === 'accepted' && (
+                                                    <button
+                                                        onClick={() => handleComplete(booking._id)}
+                                                        disabled={processingId === booking._id}
+                                                        className="w-full px-4 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-orange-500/25 flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
+                                                    >
+                                                        <FaCheck /> Mark Completed
+                                                    </button>
+                                                )}
+
+                                                {booking.status === 'completed' && booking.rating && (
+                                                    <div className="text-center bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
+                                                        <p className="text-sm text-slate-500 mb-1">Rating</p>
+                                                        <p className="text-2xl">{'⭐'.repeat(booking.rating)}</p>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            )
+                        })}
                     </div>
                 )}
             </div>

@@ -40,6 +40,12 @@ function ProviderAnalytics() {
         )
     }
 
+    // Robust stats destructuring (Local || Production)
+    const totalEarnings = stats?.totalEarnings !== undefined ? stats.totalEarnings : (stats?.earnings || 0)
+    const completedJobs = stats?.completedJobs || stats?.completed || 0
+    const pendingRequests = stats?.pendingRequests || stats?.pending || 0
+    const averageRating = stats?.avgRating || 0
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
             {/* Animated Background */}
@@ -97,7 +103,7 @@ function ProviderAnalytics() {
                         <p className="text-slate-400 text-sm mb-1">Total Earnings</p>
                         <h3 className="text-3xl font-bold text-emerald-400 flex items-center">
                             <FaRupeeSign className="text-lg" />
-                            {stats?.totalEarnings || 0}
+                            {totalEarnings}
                         </h3>
                     </div>
 
@@ -110,7 +116,7 @@ function ProviderAnalytics() {
                         </div>
                         <p className="text-slate-400 text-sm mb-1">Completed Jobs</p>
                         <h3 className="text-3xl font-bold text-blue-400">
-                            {stats?.completedJobs || 0}
+                            {completedJobs}
                         </h3>
                     </div>
 
@@ -123,7 +129,7 @@ function ProviderAnalytics() {
                         </div>
                         <p className="text-slate-400 text-sm mb-1">Average Rating</p>
                         <h3 className="text-3xl font-bold text-amber-400 flex items-center gap-2">
-                            {stats?.avgRating ? stats.avgRating.toFixed(1) : '0.0'}
+                            {typeof averageRating === 'number' ? averageRating.toFixed(1) : '0.0'}
                             <span className="text-lg">★</span>
                         </h3>
                     </div>
@@ -140,7 +146,7 @@ function ProviderAnalytics() {
                         </div>
                         <p className="text-slate-400 text-sm mb-1">Pending Requests</p>
                         <h3 className="text-3xl font-bold text-orange-400">
-                            {stats?.pendingRequests || 0}
+                            {pendingRequests}
                         </h3>
                     </div>
                 </div>
